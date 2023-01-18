@@ -13,9 +13,7 @@ export default function App() {
   })
 
   if (!fontsLoaded) {
-    return (
-      <Loading />
-    )
+    return <Loading />
   }
 
   return (
@@ -34,6 +32,7 @@ const styles = StyleSheet.create({
     justifyContent: 'center'
   },
   text: {
-    color: 'red'
+    color: '#fff',
+    fontFamily: 'Inter_800ExtraBold'
   }
 })
