@@ -29,7 +29,7 @@ model HabitWeekDays {
   habit Habit @relation(fields: [habit_id], references: [id])
 
   @@unique([habit_id, week_day])
-  @@map("habit__week_days")
+  @@map("habit_week_days")
 }
 
 model Day {
