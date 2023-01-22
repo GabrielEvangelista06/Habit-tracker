@@ -6,6 +6,7 @@ import { api } from '../lib/axios'
 
 interface HabitsListProps {
   date: Date
+  onCompletedChanged: (completed: number) => void
 }
 
 interface HabitsInfo {
@@ -17,7 +18,7 @@ interface HabitsInfo {
   completedHabits: string[]
 }
 
-export function HabitsList({ date }: HabitsListProps) {
+export function HabitsList({ date, onCompletedChanged }: HabitsListProps) {
   const [habitsInfo, setHabitsInfo] = useState<HabitsInfo>()
   useEffect(() => {
     api
@@ -33,11 +34,37 @@ export function HabitsList({ date }: HabitsListProps) {
 
   const isDateInPast = dayjs(date).endOf('day').isBefore(new Date())
 
+  async function handleToggleHabit(habitId: string) {
+    await api.patch(`/habits/${habitId}/toggle`)
+
+    const isHabitAlreadyCompleted = habitsInfo!.completedHabits.includes(habitId)
+
+    let completedHabits: string[] = []
+
+    if (isHabitAlreadyCompleted) {
+      completedHabits = habitsInfo!.completedHabits.filter(id => id !== habitId)
+    } else {
+      completedHabits = [...habitsInfo!.completedHabits, habitId]
+    }
+
+    setHabitsInfo({
+      possibleHabits: habitsInfo!.possibleHabits,
+      completedHabits
+    })
+
+    onCompletedChanged(completedHabits.length)
+  }
+
   return (
     <div className="mt-6 flex flex-col gap-3">
       {habitsInfo?.possibleHabits.map(habit => {
         return (
-          <Checkbox.Root key={habit.id} checked={habitsInfo.completedHabits.includes(habit.id)} className="flex items-center gap-3 group">
+          <Checkbox.Root
+            key={habit.id}
+            onCheckedChange={() => handleToggleHabit(habit.id)}
+            checked={habitsInfo.completedHabits.includes(habit.id)}
+            className="flex items-center gap-3 group"
+          >
             <div className="h-8 w-8 rounded-lg flex items-center justify-center bg-zinc-900 border-2 border-zinc-800 group-data-[state=checked]:bg-green-500 group-data-[state=checked]:borde-green-500">
               <Checkbox.Indicator>
                 <Check size={20} className="text-white" />
