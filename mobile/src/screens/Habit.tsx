@@ -44,7 +44,7 @@ export function Habit() {
     try {
       setLoading(true)
 
-      const response = await api.get('/day', { params: { date } })
+      const response = await api.get('day', { params: { date } })
 
       setDayInfo(response.data)
       setCompletedHabits(response.data.completedHabits)
@@ -57,10 +57,17 @@ export function Habit() {
   }
 
   async function handleToggleHabit(habitId: string) {
-    if (completedHabits.includes(habitId)) {
-      setCompletedHabits(prevState => prevState.filter(habit => habit !== habitId))
-    } else {
-      setCompletedHabits(prevState => [...prevState, habitId])
+    try {
+      await api.patch(`habits/${habitId}/toggle`)
+
+      if (completedHabits.includes(habitId)) {
+        setCompletedHabits(prevState => prevState.filter(habit => habit !== habitId))
+      } else {
+        setCompletedHabits(prevState => [...prevState, habitId])
+      }
+    } catch (error) {
+      console.error(error)
+      Alert.alert('Ops', 'Não foi possível atualizar o status do hábito')
     }
   }
 
