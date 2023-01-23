@@ -28,7 +28,7 @@ export function New() {
         return Alert.alert('Novo Hábito', 'Informe o título do hábito e escolha a recorrência desse hábito.')
       }
 
-      await api.post('/habits,', { title, weekDays })
+      await api.post('habits,', { title, weekDays })
 
       setTitle('')
       setWeekDays([])
