@@ -4,39 +4,39 @@ import { Check } from 'phosphor-react'
 import { useEffect, useState } from 'react'
 import { api } from '../lib/axios'
 
-interface HabitsListProps {
+interface HabitLisProps {
   date: Date
   onCompletedChanged: (completed: number) => void
 }
 
 interface HabitsInfo {
-  possibleHabits: Array<{
+  possibleHabits: {
     id: string
     title: string
     created_at: string
-  }>
+  }[]
   completedHabits: string[]
 }
 
-export function HabitsList({ date, onCompletedChanged }: HabitsListProps) {
+export function HabitsList({ date, onCompletedChanged }: HabitLisProps) {
   const [habitsInfo, setHabitsInfo] = useState<HabitsInfo>()
-  
-  useEffect(() => {
-    api.get('day', {
-      params:{
-        date: date.toISOString()
-      }
-    }).then(response => {
-      setHabitsInfo(response.data)
-    })
-  },[])
 
-  const isDateInPast = dayjs(date).endOf('day').isBefore(new Date())
+  useEffect(() => {
+    api
+      .get('day', {
+        params: {
+          date: date.toISOString()
+        }
+      })
+      .then(response => {
+        setHabitsInfo(response.data)
+      })
+  }, [])
 
   async function handleToggleHabit(habitId: string) {
-    await api.patch(`/habits/${habitId}/toggle`)
-
     const isHabitAlreadyCompleted = habitsInfo!.completedHabits.includes(habitId)
+
+    await api.patch(`/habits/${habitId}/toggle`)
 
     let completedHabits: string[] = []
 
@@ -53,6 +53,8 @@ export function HabitsList({ date, onCompletedChanged }: HabitsListProps) {
 
     onCompletedChanged(completedHabits.length)
   }
+
+  const isDateInPast = dayjs(date).endOf('day').isBefore(new Date())
 
   return (
     <div className="mt-6 flex flex-col gap-3">
