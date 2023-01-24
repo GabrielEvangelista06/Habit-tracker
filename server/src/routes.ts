@@ -1,6 +1,5 @@
 import dayjs from 'dayjs'
 import { FastifyInstance } from 'fastify'
-import { request } from 'http'
 import { z } from 'zod'
 import { prisma } from './lib/prisma'
 
@@ -72,8 +71,6 @@ export async function appRoutes(app: FastifyInstance) {
       completedHabits
     }
   })
-
-  // completar / não completar uma tarefa
 
   app.patch('/habits/:id/toggle', async request => {
     const toggleHabitParams = z.object({
